@@ -35,16 +35,26 @@ A modern, fully responsive developer portfolio combined with interactive mini-ga
 ```
 
 src/
-├── app/                  # Next.js App Router (File-based routing)
-│   ├── about/            # About page
-│   ├── contact/          # Contact section
-│   ├── games/            # Game listing page
-│   ├── project/[id]/     # Dynamic routes for project details
-│   ├── ui-components/    # App-specific UI logic
-│   └── layout.tsx        # Main application wrapper
-├── components/           # Reusable Game & UI Components
-│   ├── Header/Footer     # Site navigation
-│   └── [GameFiles].tsx   # Individual game logic & UI
+├── app/                    # Next.js App Router (File-based routing)
+│   ├── about/              # About page
+│   ├── contact/            # Contact section
+│   ├── games/              # Game listing page
+│   ├── project/[id]/       # Dynamic routes for project details
+│   ├── ui-components/      # App-specific UI logic
+│   ├── layout.tsx          # Main application wrapper
+│   ├── page.tsx            # Home page
+│   └── not-found.tsx       # Erro page
+├── components/             # Reusable Game & UI Components
+│   ├── Header              # Site navigation
+│   ├── Footer              # Site navigation
+│   ├── HexGuess            # Site navigation
+│   ├── MemoryMatch         # Site navigation
+│   ├── NumberGuess         # Site navigation
+│   ├── RockPaperScissors   # Site navigation
+│   ├── Snake               # Site navigation
+│   ├── SpeedTyper          # Site navigation
+│   ├── Tetris              # Site navigation
+│   └── TicTacToe           # Individual game logic & UI
 
 ```
 ---
