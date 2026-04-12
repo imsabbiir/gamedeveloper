@@ -20,7 +20,7 @@ export default function Footer() {
           <RiTwitterFill size={20} />
         </a>
         <a 
-          href="https://linkedin.com" 
+          href="www.linkedin.com/in/imsabbir" 
           target="_blank" 
           rel="noreferrer"
           className="px-4 border-r border-[#1E2D3D] h-full flex items-center hover:text-white transition-colors"
@@ -31,7 +31,7 @@ export default function Footer() {
 
       {/* Github Username - Label hidden on mobile, showing only icon and username on desktop */}
       <a 
-        href="https://github.com/mehedi-hasan" 
+        href="https://github.com/imsabbiir" 
         target="_blank" 
         rel="noreferrer"
         className="px-4 md:px-5 border-l border-[#1E2D3D] h-full flex items-center gap-2 hover:text-white transition-colors"

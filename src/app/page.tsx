@@ -18,7 +18,7 @@ export default function HeroSection() {
             Mehedi Hasan
           </h1>
           <h2 className="text-[#43D9AD] sm:text-[#4D5BCE] text-xl md:text-3xl flex items-center gap-3">
-            <span className="text-[#607B96]">{">"}</span> Front-end developer
+            <span className="text-[#607B96]">{">"}</span> Game Developer
           </h2>
 
           <div className="mt-20 md:mt-32 lg:mt-16 space-y-3">
@@ -29,7 +29,7 @@ export default function HeroSection() {
               <span className="text-[#43D9AD]">githubLink</span>
               <span className="text-white">=</span>
               <span className="text-[#E99287] break-all">
-                "https://github.com/example/url"
+                "https://github.com/imsabbiir"
               </span>
             </div>
           </div>

@@ -20,6 +20,28 @@ function Snake() {
   const direction = useRef({ x: 0, y: -20 });
   const food = useRef({ x: -100, y: -100 });
 
+  const generateRandomSnake = (width: number, height: number) => {
+    const gridSize = 20;
+    const maxX = Math.floor(width / gridSize) - 10;
+    const maxY = Math.floor(height / gridSize) - 10;
+    
+    const startX = (Math.floor(Math.random() * (maxX - 5)) + 5) * gridSize;
+    const startY = (Math.floor(Math.random() * (maxY - 5)) + 5) * gridSize;
+    const hDir = Math.random() > 0.5 ? gridSize : -gridSize;
+
+    return [
+      { x: startX, y: startY },
+      { x: startX, y: startY + gridSize },
+      { x: startX, y: startY + gridSize * 2 },
+      { x: startX + hDir, y: startY + gridSize * 2 },
+      { x: startX + hDir * 2, y: startY + gridSize * 2 },
+      { x: startX + hDir * 3, y: startY + gridSize * 2 },
+      { x: startX + hDir * 3, y: startY + gridSize * 3 },
+      { x: startX + hDir * 3, y: startY + gridSize * 4 },
+      { x: startX + hDir * 3, y: startY + gridSize * 5 },
+    ];
+  };
+
   const generateFood = useCallback(() => {
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
@@ -48,27 +70,18 @@ function Snake() {
 
   const resetGame = () => {
     if (!canvasRef.current) return;
-    const midX = Math.floor(canvasRef.current.width / 40) * 20;
-    snake.current = [
-      { x: midX, y: 140 },
-      { x: midX, y: 160 },
-      { x: midX, y: 180 },
-    ];
+    snake.current = generateRandomSnake(canvasRef.current.width, canvasRef.current.height);
     direction.current = { x: 0, y: -20 };
     setFoodLeft(10);
     setGameOver(false);
     setIsWin(false);
-    setIsGameStart(true); // Start immediately on restart
+    setIsGameStart(true);
     generateFood();
   };
 
-  // ⌨️ Keyboard Logic (Enter to start/restart + Arrows)
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Enter") {
-        startGame();
-      }
-
+      if (e.key === "Enter") startGame();
       if (!isGameStart) return;
       if (e.key === "ArrowUp" && direction.current.y === 0) direction.current = { x: 0, y: -20 };
       if (e.key === "ArrowDown" && direction.current.y === 0) direction.current = { x: 0, y: 20 };
@@ -82,6 +95,7 @@ function Snake() {
   const draw = (ctx: CanvasRenderingContext2D) => {
     ctx.fillStyle = "#010C15";
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    
     // Draw Food
     ctx.beginPath();
     ctx.arc(food.current.x + 10, food.current.y + 10, 6, 0, Math.PI * 2);
@@ -89,18 +103,34 @@ function Snake() {
     ctx.shadowBlur = 15;
     ctx.shadowColor = "#43D9AD";
     ctx.fill();
-    // Draw Snake
-    ctx.shadowBlur = 15;
-    ctx.strokeStyle = "#43D9AD";
-    ctx.lineWidth = 14;
-    ctx.lineJoin = "round";
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    snake.current.forEach((p, i) => {
-      if (i === 0) ctx.moveTo(p.x + 10, p.y + 10);
-      else ctx.lineTo(p.x + 10, p.y + 10);
-    });
-    ctx.stroke();
+
+    // Draw Snake with Gradient Path
+    if (snake.current.length > 0) {
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = "#43D9AD";
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.lineWidth = 14;
+
+      // Create a linear gradient from Head to Tail
+      const head = snake.current[0];
+      const tail = snake.current[snake.current.length - 1];
+      const gradient = ctx.createLinearGradient(
+        head.x + 10, head.y + 10, 
+        tail.x + 10, tail.y + 10
+      );
+      
+      gradient.addColorStop(0, "rgba(67, 217, 173, 1)");   // Solid at head
+      gradient.addColorStop(1, "rgba(67, 217, 173, 0.1)"); // Faded at tail
+
+      ctx.strokeStyle = gradient;
+      ctx.beginPath();
+      snake.current.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x + 10, p.y + 10);
+        else ctx.lineTo(p.x + 10, p.y + 10);
+      });
+      ctx.stroke();
+    }
   };
 
   useEffect(() => {
@@ -112,8 +142,7 @@ function Snake() {
       canvas.width = container.clientWidth;
       canvas.height = container.clientHeight;
       if (snake.current.length === 0) {
-        const midX = Math.floor(canvas.width / 40) * 20;
-        snake.current = [{ x: midX, y: 140 }, { x: midX, y: 160 }, { x: midX, y: 180 }];
+        snake.current = generateRandomSnake(canvas.width, canvas.height);
         generateFood();
       }
     };
@@ -153,21 +182,18 @@ function Snake() {
   }, [isGameStart, gameOver, isWin, generateFood]);
 
   return (
-    <div className="relative group w-150 mx-auto mt-20">
+    <div className="relative group w-150 mx-auto">
       <div className="bg-linear-to-br from-[#175553] to-[#011627] p-6 rounded-lg border border-[#0C1616] shadow-2xl grid grid-cols-5 gap-6">
-        
         <div ref={containerRef} className="w-full h-80 bg-[#010C15]/80 rounded-lg shadow-inner flex items-center justify-center col-span-3 relative overflow-hidden border border-[#1E2D3D]">
           <canvas ref={canvasRef} className="block" />
-
           {!isGameStart && !gameOver && !isWin && (
             <button onClick={startGame} className="bg-[#FEA55F] text-[#01080E] px-4 py-2 rounded-lg text-[10px] font-bold uppercase absolute bottom-8 hover:bg-[#ffb37a]">
               start-game
             </button>
           )}
-
           {(gameOver || isWin) && (
-            <div className="absolute flex flex-col items-center gap-3 bg-[#010C15]/90 p-5 rounded-xl border border-white/10">
-              <p className={gameOver ? "text-red-400" : "text-green-400"}>{gameOver ? "GAME OVER!" : "WELL DONE!"}</p>
+            <div className="absolute flex flex-col items-center gap-3 rounded-xl w-full">
+              <p className={`w-full py-3 text-center ${gameOver ? "text-red-600 bg-[#ff801f36]" : "text-green-600 bg-[#01813b44]"}`}>{gameOver ? "GAME OVER!" : "WELL DONE!"}</p>
               <button onClick={resetGame} className="text-[#FEA55F] text-xs font-mono hover:underline">
                 play-again
               </button>
@@ -186,13 +212,24 @@ function Snake() {
             </div>
           </div>
           <div className="font-mono">
-            <p className="text-[10px] text-white mb-2">{"//"} food left</p>
-            <div className="grid grid-cols-5 gap-2 opacity-60">
-              {[...Array(foodLeft)].map((_, i) => (
-                <div key={i} className="w-2 h-2 rounded-full bg-[#43D9AD] shadow-[0_0_8px_#43D9AD]" />
-              ))}
-            </div>
-          </div>
+  <p className="text-[10px] text-white mb-2">{"//"} food left</p>
+  <div className="grid grid-cols-5 gap-4">
+    {[...Array(10)].map((_, i) => {
+      // If the index is less than foodLeft, it's "available" (glowing)
+      const isActive = i < foodLeft;
+      return (
+        <div 
+          key={i} 
+          className={`w-2 h-2 rounded-full transition-all duration-300 ${
+            isActive 
+              ? "bg-[#43D9AD] shadow-[0_0_10px_#43D9AD] opacity-100" 
+              : "bg-[#43D9AD] opacity-20 shadow-none"
+          }`} 
+        />
+      );
+    })}
+  </div>
+</div>
         </div>
       </div>
     </div>

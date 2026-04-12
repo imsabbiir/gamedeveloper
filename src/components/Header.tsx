@@ -7,7 +7,7 @@ import { RiMenuFill, RiCloseFill } from "react-icons/ri";
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  
+
   const navItems = [
     { label: "_hello", link: "/" },
     { label: "_about-me", link: "/about" },
@@ -32,23 +32,32 @@ export default function Header() {
               className={`px-8 h-full flex items-center border-r border-[#1E2D3D] transition-colors hover:text-white relative ${isActive ? "text-white" : ""}`}
             >
               {item.label}
-              {isActive && <div className="absolute bottom-0 left-0 w-full h-1 bg-[#FEA55F]" />}
+              {isActive && (
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-[#FEA55F]" />
+              )}
             </Link>
           );
         })}
       </nav>
 
       {/* Desktop Contact Link */}
+      {/* Desktop Contact Link */}
       <Link
         href="/contact"
-        className={`hidden lg:flex px-6 border-l border-[#1E2D3D] h-full items-center hover:text-white ${pathname === "/contact" ? "text-white" : ""}`}
+        className={`hidden lg:flex px-6 border-l border-[#1E2D3D] h-full items-center transition-colors hover:text-white relative ${
+          pathname === "/contact" ? "text-white" : ""
+        }`}
       >
         _contact-me
+        {/* Add the orange bar logic here */}
+        {pathname === "/contact" && (
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-[#FEA55F]" />
+        )}
       </Link>
 
       {/* Mobile Toggle Button */}
-      <button 
-        className="lg:hidden px-6 h-full flex items-center text-2xl" 
+      <button
+        className="lg:hidden px-6 h-full flex items-center text-2xl"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <RiCloseFill /> : <RiMenuFill />}
